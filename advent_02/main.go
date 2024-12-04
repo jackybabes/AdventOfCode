@@ -90,15 +90,30 @@ func main() {
 	for _, report := range reports {
 		fmt.Println(report)
 
-		// fmt.Println(checkIncOrDec(report))
+		// create array of reports with one missing level from each
+		var levelRemovedReports [][]int
+		for i := range len(report) {
+			var r []int
+			for j, n := range report {
+				if i != j {
+					r = append(r, n)
+				}
+			}
+			levelRemovedReports = append(levelRemovedReports, r)
+		}
+		// fmt.Println(levelRemovedReports)
 
-		// fmt.Println(checkAdjacentLevelsBetweenOneAndThree(report))
+		var trueLevelRemovedReports int
+		for _, lrr := range levelRemovedReports {
+			if checkIncOrDec(lrr) && checkAdjacentLevelsBetweenOneAndThree(lrr) {
+				trueLevelRemovedReports++
+			}
+		}
 
-		fmt.Println(checkIncOrDec(report) && checkAdjacentLevelsBetweenOneAndThree(report))
-
-		if checkIncOrDec(report) && checkAdjacentLevelsBetweenOneAndThree(report) {
+		if trueLevelRemovedReports > 0 {
 			trueReports++
 		}
+
 	}
 
 	fmt.Printf("True Reports: %v", trueReports)
