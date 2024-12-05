@@ -65,15 +65,15 @@ func makeEmpty() [][]string {
 
 func main() {
 	filename := "input.txt"
-	wordToFind := "XMAS"
+	wordToFind := "MAS"
 	directions := map[string][2]int{
-		"e":  {0, 1},
+		// "e":  {0, 1},
 		"se": {1, 1},
-		"s":  {1, 0},
+		// "s":  {1, 0},
 		"sw": {1, -1},
-		"w":  {0, -1},
+		// "w":  {0, -1},
 		"nw": {-1, -1},
-		"n":  {-1, 0},
+		// "n":  {-1, 0},
 		"ne": {-1, 1},
 	}
 	// emptyMatrix := makeEmpty()
@@ -85,6 +85,7 @@ func main() {
 	printWS(wordSearch)
 	// printWS(emptyMatrix)
 
+	var wordFound [][2]int
 	var timesWordFound int
 
 	for i, line := range wordSearch {
@@ -113,11 +114,24 @@ func main() {
 						// emptyMatrix[i+(2*v[0])][j+(2*v[1])] = "A"
 						// emptyMatrix[i+(3*v[0])][j+(3*v[1])] = "S"
 						log.Println("Success")
-						timesWordFound++
+						wordFound = append(wordFound, [2]int{i + (1 * v[0]), j + (1 * v[1])})
+						// timesWordFound++
 					}
 				}
 
 			}
+		}
+	}
+
+	numberOfCrossingWord := make(map[[2]int]int)
+
+	for _, word := range wordFound {
+		numberOfCrossingWord[word]++
+	}
+
+	for _, v := range numberOfCrossingWord {
+		if v > 1 {
+			timesWordFound++
 		}
 	}
 
