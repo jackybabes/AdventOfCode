@@ -77,7 +77,7 @@ func main() {
 		manuals = append(manuals, ConvertStringToIntSlice(manual))
 	}
 
-	var goodManuals [][]int
+	var badManuals [][]int
 
 ManualsLoop:
 	for _, manual := range manuals {
@@ -88,6 +88,7 @@ ManualsLoop:
 			for _, pageBefore := range pagesBefore {
 				if !slices.Contains(keyMustBeAfterMap[page], pageBefore) {
 					log.Println("Bad times")
+					badManuals = append(badManuals, manual)
 					continue ManualsLoop
 				}
 			}
@@ -97,6 +98,7 @@ ManualsLoop:
 			for _, pageAfter := range pagesAfter {
 				if !slices.Contains(keyMustBeBeforeMap[page], pageAfter) {
 					log.Println("Bad times")
+					badManuals = append(badManuals, manual)
 					continue ManualsLoop
 				}
 			}
@@ -105,19 +107,41 @@ ManualsLoop:
 
 		}
 		log.Println("Success")
-		goodManuals = append(goodManuals, manual)
+
 	}
 
-	log.Println(goodManuals)
+	log.Println(len(badManuals))
+
+	var newManuals [][]int
+	for _, manual := range badManuals {
+		var newManual []int
+	NextPage:
+		for _, page := range manual {
+			if newManual == nil {
+				newManual = append(newManual, page)
+				continue
+			}
+			// log.Println(i)
+			for j, newManualPage := range newManual {
+				if slices.Contains(keyMustBeBeforeMap[page], newManualPage) {
+					// fmt.Println(j)
+					newManual = append(newManual[:j], append([]int{page}, newManual[j:]...)...)
+					continue NextPage
+				}
+
+			}
+			newManual = append(newManual, page)
+		}
+		newManuals = append(newManuals, newManual)
+	}
+
+	log.Println(newManuals)
 
 	var total int
-
-	for _, gm := range goodManuals {
+	for _, gm := range newManuals {
 		indexOfHalf := (len(gm) / 2)
-
 		total += gm[indexOfHalf]
 	}
-
 	log.Println(total)
 
 }
