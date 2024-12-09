@@ -14,6 +14,10 @@ type Coord struct {
 	y int
 }
 
+func Add(c1, c2 Coord) Coord {
+	return Coord{c1.x + c2.x, c1.y + c2.y}
+}
+
 // type Antenna struct {
 // 	pos  Coord
 // 	freq string
@@ -80,7 +84,7 @@ func abs(n int) int {
 	return n
 }
 
-func makeAntiNodes(pair [2]Coord) [2]Coord {
+func makeAntiNodes(pair [2]Coord) []Coord {
 	pointA := pair[0]
 	pointB := pair[1]
 
@@ -90,26 +94,39 @@ func makeAntiNodes(pair [2]Coord) [2]Coord {
 	antiA := Coord{}
 	antiB := Coord{}
 
+	antiADistance := Coord{}
+	antiBDistance := Coord{}
+
 	if pointA.x < pointB.x {
-		antiA.x = pointA.x - xDistance
-		antiB.x = pointB.x + xDistance
+		antiADistance.x = -xDistance
+		antiBDistance.x = xDistance
 	} else {
-		antiA.x = pointA.x + xDistance
-		antiB.x = pointB.x - xDistance
+		antiADistance.x = xDistance
+		antiBDistance.x = -xDistance
 	}
 
 	if pointA.y < pointB.y {
-		antiA.y = pointA.y - yDistance
-		antiB.y = pointB.y + yDistance
+		antiADistance.y = -yDistance
+		antiBDistance.y = yDistance
 	} else {
-		antiA.y = pointA.y + yDistance
-		antiB.y = pointB.y - yDistance
+		antiADistance.y = yDistance
+		antiBDistance.y = -yDistance
 	}
 
-	// antiA := Coord{pointA.x + xDistance, pointA.y + yDistance}
-	// antiB := Coord{pointB.x - xDistance, pointB.y - yDistance}
+	// antiA = Add(pointA, antiADistance)
+	// antiB = Add(pointB, antiBDistance)
 
-	return [2]Coord{antiA, antiB}
+	var antiNodes []Coord
+	for i := range 100 {
+		_ = i
+		antiA = Add(pointA, antiADistance)
+		antiB = Add(pointB, antiBDistance)
+		antiNodes = append(antiNodes, antiA, antiB)
+		pointA = antiA
+		pointB = antiB
+	}
+
+	return antiNodes
 
 }
 
@@ -148,6 +165,6 @@ func main() {
 	}
 
 	antennaMap.print()
-	log.Println(antennaMap.countPositions("#"))
+	log.Println(antennaMap.countPositionsNotEqual("."))
 
 }
