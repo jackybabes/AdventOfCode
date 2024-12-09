@@ -37,6 +37,21 @@ func checkFreeSpace(s []string) bool {
 	return slices.Contains(s, ".")
 }
 
+func findFreeSpaceLen(s []string, len int) int {
+	var freeSpaces int
+	for i, e := range s {
+		if e == "." {
+			freeSpaces++
+			if freeSpaces == len {
+				return i - len + 1
+			}
+			continue
+		}
+		freeSpaces = 0
+	}
+	return -1
+}
+
 func moveFinalDataPointIntoFirstFreeSpace(s []string) []string {
 	finalData := s[len(s)-1]
 	s = s[:len(s)-1]
@@ -68,13 +83,46 @@ func main() {
 
 	log.Printf("Len of diskmap unpacked: %v", len(diskMap))
 
-	for checkFreeSpace(diskMap) {
-		diskMap = moveFinalDataPointIntoFirstFreeSpace(diskMap)
-		// log.Println(diskMap)
+	// Part 2 (THIS IS A MESS... but it works)
+	var fileLen int
+	var id string
+	for i := range diskMap {
+		i = len(diskMap) - i - 1
+		if id == "" {
+			id = diskMap[i]
+			fileLen++
+			continue
+		}
+		if id == diskMap[i] {
+			fileLen++
+			continue
+		}
+
+		indexOfFreeSpace := findFreeSpaceLen(diskMap, fileLen)
+		// log.Println(indexOfFreeSpace)
+		if indexOfFreeSpace > 0 && indexOfFreeSpace < i {
+			for j := range fileLen {
+				diskMap[indexOfFreeSpace+j] = diskMap[i+j+1]
+				diskMap[i+j+1] = "."
+			}
+		}
+
+		fileLen = 1
+		id = diskMap[i]
+
+		continue
+
 	}
 
-	log.Printf("Len of diskmap sorted: %v", len(diskMap))
+	// Part One
+	// for checkFreeSpace(diskMap) {
+	// 	diskMap = moveFinalDataPointIntoFirstFreeSpace(diskMap)
+	// 	// log.Println(diskMap)
+	// }
 
-	log.Println(calcCheckSum(diskMap))
+	// log.Println(diskMap)
+
+	log.Printf("Len of diskmap sorted: %v", len(diskMap))
+	log.Printf("Checksum of DiskMap: %v", calcCheckSum(diskMap))
 
 }
