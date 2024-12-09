@@ -50,3 +50,15 @@ func (m *xyMap) countPositions(s string) int {
 	}
 	return count
 }
+
+func (m *xyMap) countPositionsNotEqual(s string) int {
+	var count int
+	for x := range m.matrix[0] {
+		for y := range m.matrix {
+			if m.get(Coord{x, y}) != s {
+				count++
+			}
+		}
+	}
+	return count
+}
